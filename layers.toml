@@ -1,0 +1,23 @@
+# The layer map. Lowest layer first. Code may import its own layer or any lower one, never higher.
+# `tests/test_layers.py` enforces this. See docs/structure/README.md.
+
+# Directories that Python imports are resolved from (`import a.b` -> <root>/a/b.py or <root>/a/b/).
+roots = ["src"]
+
+# Each layer is a name and the paths (relative to the repo root) that belong to it.
+# Starts empty; fill in at the first grilling session. Example:
+#
+# [[layer]]
+# name = "foundation"
+# paths = ["src/config.py", "src/clock.py"]
+#
+# [[layer]]
+# name = "core"
+# paths = ["src/core"]
+
+# Known exceptions, each with a reason. This list may only shrink. Example:
+#
+# [[accepted]]
+# file = "src/core/thing.py"
+# imports = "src/ui/widgets.py"
+# reason = "why this exception is acceptable for now, and the ticket that removes it"
