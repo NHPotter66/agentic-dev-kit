@@ -1,7 +1,7 @@
 # 03: the copy script copies only tracked files
 
 **Type:** build
-**Status:** open
+**Status:** resolved (2026-10-05, copies git-tracked files only; never kit-dev/; stops without a clone)
 **Blocked by:** none
 **verified_by:** static
 
@@ -34,3 +34,10 @@ happens when the kit is not a git checkout (for example, a ZIP download).
 timeline or lessons about building the kit) must never be copied into a project. Only the
 templates are. **Decided 2026-10-05 (human):** those records live in `kit-dev/`, which the
 script never copies. Acceptance adds: a planted tracked file in `kit-dev/` is not copied.
+
+**2026-10-05, built.** `kit_files()` asks `git ls-files`, after checking that git's top folder is
+the kit itself, so a ZIP unpacked inside another repo also stops. The check runs before the target
+folder is created. Planted from a backup, each failed: kit-dev exclusion removed; folder walk
+instead of git (`['.git/HEAD', ...]`); clone check removed (`DID NOT RAISE`). Restored (identical
+to backup). Suite: 11 passed, 2 skipped. Real runs: this kit copied 22 files with no `.ruff_cache`
+or `kit-dev`. A `git archive` copy printed the clone message, exited 2, and created no folder.
