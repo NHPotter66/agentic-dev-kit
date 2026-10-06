@@ -32,4 +32,5 @@ happens when the kit is not a git checkout (for example, a ZIP download).
 
 **Added 2026-10-05 (human):** the kit's own development records (its maps, tickets, and any
 timeline or lessons about building the kit) must never be copied into a project. Only the
-templates are. Where those records live is an open decision.
+templates are. **Decided 2026-10-05 (human):** those records live in `kit-dev/`, which the
+script never copies. Acceptance adds: a planted tracked file in `kit-dev/` is not copied.
