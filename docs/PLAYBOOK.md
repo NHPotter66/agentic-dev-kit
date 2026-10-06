@@ -102,8 +102,9 @@ all of that.
 - what proves it;
 - what is not proven yet.
 
-The human decides. The mattpocock `/code-review` skill checks the diff two ways, separately:
-against the house standards, and against the ticket.
+The human decides. The `/mattpocock-skills:code-review` skill checks the diff two ways,
+separately: against the house standards, and against the ticket. (Plain `/code-review` is Claude
+Code's own bug review, which is useful too but different.)
 
 **Why.** The review is where the human learns the codebase. Without it, a team using agents ends
 up with code that nobody on the team has read.

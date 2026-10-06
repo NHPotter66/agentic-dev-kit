@@ -6,6 +6,9 @@ It never overwrites. A file that already exists in the target is skipped and lis
 merge it by hand (an existing CLAUDE.md is the usual one). If the target already has a README.md,
 the kit's README lands at docs/METHOD.md instead, with its links fixed for the new location.
 
+The kit's MIT LICENSE lands at docs/KIT-LICENSE, so it covers the kit's files without becoming the
+project's own license.
+
 It copies only the files git tracks, so the kit must be a `git clone`, not a ZIP download. The
 kit's own development records in kit-dev/ are never copied.
 
@@ -74,6 +77,8 @@ def copy_kit(target: Path) -> tuple[list[str], list[str]]:
         dest_rel = rel
         if rel == "README.md" and (target / "README.md").exists():
             dest_rel = "docs/METHOD.md"
+        elif rel == "LICENSE":
+            dest_rel = "docs/KIT-LICENSE"   # the kit's license, kept with its docs; not the project's
         dest = target / dest_rel
         if dest.exists():
             skipped.append(dest_rel)

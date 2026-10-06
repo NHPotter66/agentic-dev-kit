@@ -40,6 +40,8 @@ def test_an_empty_target_gets_the_whole_kit_and_none_of_its_machinery(tmp_path):
     assert not (tmp_path / "tests" / "test_new_project.py").exists()
     assert not (tmp_path / ".git").exists()
     assert not (tmp_path / "kit-dev").exists()
+    assert (tmp_path / "docs" / "KIT-LICENSE").is_file()
+    assert not (tmp_path / "LICENSE").exists(), "the kit's license must not license the project"
 
 
 def test_an_existing_repo_keeps_its_files(tmp_path):

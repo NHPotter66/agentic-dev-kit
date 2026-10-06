@@ -30,7 +30,7 @@ written in the repo, which is why this project writes so much down.
 | Command | What it does |
 |---|---|
 | `/grill-me` | Interviews you on a design until nothing is left undecided. |
-| `/code-review` | Reviews a diff against the house rules and against the ticket, separately. |
+| `/mattpocock-skills:code-review` | Reviews a diff against the house rules and against the ticket, separately. (Plain `/code-review` is Claude Code's own bug review.) |
 | `/plan` | Plans before touching files. |
 | `/compact` | Shrinks a long conversation so it can continue. |
 | `/resume` | Picks up an earlier session. |

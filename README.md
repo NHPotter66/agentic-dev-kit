@@ -95,17 +95,30 @@ docs/
   concepts/                one page per new concept, related to something familiar
   structure/README.md      the layer map: which code may depend on which
 .scratch/                  the map, specs and tickets (templates included)
-tests/test_layers.py       the layer guard, with its own control test
+tests/test_layers.py       the layer guard, with its own control tests
 layers.toml                the layer map in data form, which the guard reads
+```
+
+Only in the kit, never copied into a project:
+
+```
+scripts/new_project.py     copies the kit into a project (below)
+kit-dev/                   the kit's own maps, tickets and history
+LICENSE                    MIT; a project gets a copy at docs/KIT-LICENSE, not as its own license
 ```
 
 ## Starting a new project from this kit
 
-1. Copy the repo and rename it.
-2. Fill in the `<!-- FILL IN -->` sections of `CLAUDE.md`: what the project is, how to run
+You need git and Python 3.11 or newer.
+
+1. Clone the kit with `git clone`. A ZIP download won't work: the script asks git which files
+   belong to the kit, so local leftovers like caches stay behind.
+2. Run `python scripts/new_project.py <your-project-folder>`. The folder can be new or an existing
+   repo. Nothing is overwritten, and it lists any file it skipped so you can merge it by hand.
+3. Fill in the `<!-- FILL IN -->` sections of `CLAUDE.md`: what the project is, how to run
    tests, what `staged` and `real` mean for it.
-3. Delete `docs/MODEL_OUTPUT.md` if your code never reads AI model output.
-4. Open Claude Code and ask it to grill you on the first map.
+4. Delete `docs/MODEL_OUTPUT.md` if your code never reads AI model output.
+5. Open Claude Code and ask it to grill you on the first map.
 
 The kit stays generic. Project knowledge (a framework, hardware, a domain) goes in the project,
 never back in the kit. Improvements to the method itself come back here.
