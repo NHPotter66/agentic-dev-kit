@@ -27,21 +27,35 @@ def load_map(root: Path) -> dict:
 
 
 def imports_of(path: Path) -> list[str]:
-    """Every module name this Python file imports, at any depth."""
+    """Every module name this Python file imports, at any depth.
+
+    `from a import b` gives "a.b", since b may be a module; `resolve()` falls back to "a" if not.
+    A relative import keeps its leading dots: `from ..high import ui` gives "..high.ui".
+    """
     names = []
     for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
         if isinstance(node, ast.Import):
             names += [a.name for a in node.names]
-        elif isinstance(node, ast.ImportFrom) and node.module and node.level == 0:
-            names.append(node.module)
+        elif isinstance(node, ast.ImportFrom):
+            prefix = "." * node.level + (node.module + "." if node.module else "")
+            names += [prefix + a.name for a in node.names]
     return names
 
 
-def resolve(module: str, root: Path, source_roots: list[str]) -> Path | None:
-    """The repo file a module name points at, or None for a third-party module."""
-    parts = module.split(".")
-    for src in source_roots:
-        base = root / src
+def resolve(module: str, importer: Path, root: Path, source_roots: list[str]) -> Path | None:
+    """The repo file a module name points at, or None for a third-party module.
+
+    A name with leading dots is relative to the importing file: one dot is its own folder, each
+    extra dot is one folder up.
+    """
+    rest = module.lstrip(".")
+    level = len(module) - len(rest)
+    if level:
+        bases = [importer.parents[level - 1]]
+    else:
+        bases = [root / src for src in source_roots]
+    parts = rest.split(".")
+    for base in bases:
         for n in range(len(parts), 0, -1):
             stem = base.joinpath(*parts[:n])
             for candidate in (stem.with_suffix(".py"), stem / "__init__.py"):
@@ -73,7 +87,7 @@ def upward_imports(root: Path) -> set[tuple[str, str]]:
             if mine is None:
                 continue
             for module in imports_of(path):
-                target = resolve(module, root, source_roots)
+                target = resolve(module, path, root, source_roots)
                 if target is None:
                     continue
                 theirs = layer_of(target, root, layers)
@@ -146,6 +160,26 @@ def test_the_guard_catches_an_upward_import(tmp_path):
     (tmp_path / "src" / "low" / "core.py").write_text("import high.ui\n")       # up: planted
 
     assert upward_imports(tmp_path) == {("src/low/core.py", "src/high/ui.py")}
+
+
+def test_the_guard_catches_a_relative_upward_import(tmp_path):
+    (tmp_path / "layers.toml").write_text(
+        'roots = ["src"]\n'
+        '[[layer]]\nname = "low"\npaths = ["src/app/low"]\n'
+        '[[layer]]\nname = "high"\npaths = ["src/app/high"]\n')
+    for pkg in ("app", "app/low", "app/high"):
+        (tmp_path / "src" / pkg).mkdir(parents=True, exist_ok=True)
+        (tmp_path / "src" / pkg / "__init__.py").write_text("")
+    (tmp_path / "src" / "app" / "high" / "ui.py").write_text("")
+    (tmp_path / "src" / "app" / "low" / "util.py").write_text("")
+    (tmp_path / "src" / "app" / "low" / "core.py").write_text(
+        "from . import util\nfrom .util import x\n"                             # same layer: fine
+        "from ..high import ui\n")                                              # up: planted
+    (tmp_path / "src" / "app" / "low" / "other.py").write_text(
+        "from .. import high\n")                                                # up: planted
+
+    assert upward_imports(tmp_path) == {("src/app/low/core.py", "src/app/high/ui.py"),
+                                        ("src/app/low/other.py", "src/app/high/__init__.py")}
 
 
 def test_the_guard_names_a_file_in_no_layer(tmp_path):

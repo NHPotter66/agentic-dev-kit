@@ -36,3 +36,8 @@ ever shrink.
 replace only the `imports_of()` function with one that lists a file's dependencies, for example by
 reading `#include` lines or a build file's dependency list. Then plant an upward dependency and
 confirm the guard catches it.
+
+## What the guard cannot see
+
+It reads `import` lines, absolute and relative. It cannot see an import built at run time, such as
+`importlib.import_module(name)`. Keep those rare, and say in a comment which layer they reach.

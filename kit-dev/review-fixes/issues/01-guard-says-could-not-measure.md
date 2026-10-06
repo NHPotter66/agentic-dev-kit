@@ -1,7 +1,7 @@
 # 01: the layer guard says "could not measure" instead of "clean"
 
 **Type:** build
-**Status:** open
+**Status:** resolved (2026-10-05, empty map skips; unmapped files fail by name)
 **Blocked by:** none
 **verified_by:** static
 

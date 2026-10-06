@@ -1,7 +1,7 @@
 # 02: the layer guard catches relative imports
 
 **Type:** build
-**Status:** open
+**Status:** resolved (2026-10-05, relative imports resolved from the importing file)
 **Blocked by:** 01 (same file)
 **verified_by:** static
 
@@ -26,3 +26,9 @@ like absolute ones.
   limit in `docs/structure/README.md`.
 
 ## Notes and progress
+**2026-10-05, built.** `imports_of()` keeps the leading dots, and `resolve()` starts a dotted name
+from the importing file's folder. The first attempt failed its own control: `from ..high import ui`
+resolved to `high/__init__.py`, not `ui.py`. Fixed by resolving `module.name` for each imported
+name, which also sharpens absolute `from a import b`. Planted the old "skip relative imports" line
+from a backup → control failed (`set() == {...}`). Restored (identical to backup). Suite: 9 passed,
+2 skipped. Dynamic-import limit noted in `docs/structure/README.md`.
